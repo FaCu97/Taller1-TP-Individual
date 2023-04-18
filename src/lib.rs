@@ -25,26 +25,38 @@ pub fn leer_archivo() -> String {
     let file_path = &args[1];
     fs::read_to_string(file_path).expect("Should have been able to read the file")
 }
-pub fn validar_archivo(contenido_archivo: &String) {
-    // aca lanzo errores
-    // Formato incorrecto:
-    // - El tablero ingresado tiene una cantidad incorrecta de caracteres.
-    //   (debe tener 128)
-    // - No hay 2 piezas
-    // - Piezas mismo color
-    // - Caracter distinto a ' ', '\n', R, D, A, C, T, P, r, d, a, c, t, p
-
+pub fn validar_archivo(contenido_archivo: &String) -> Result<(), &'static str> {
+    let caracteres_validos = [
+        ' ', '\n', '_', 'p', 'P', 'r', 'R', 'd', 'D', 't', 'T', 'a', 'A', 'c', 'C',
+    ];
+    let caracteres_piezas = ['p', 'P', 'r', 'R', 'd', 'D', 't', 'T', 'a', 'A', 'c', 'C'];
     let cantidad_caracteres_archivo = contenido_archivo.len();
     if cantidad_caracteres_archivo != 128 {
-        let descripcion_error =
-            String::from("Formato del archivo incorrecto, la cantidad de caracteres debe ser 128.");
-        imprimir_error(descripcion_error)
+        return Err("Formato del archivo incorrecto, la cantidad de caracteres debe ser 128.");
     }
+
+    let mut piezas: Vec<char> = Vec::new();
+    for caracter in contenido_archivo.chars() {
+        if !caracteres_validos.contains(&caracter) {
+            return Err("Formato del archivo incorrecto, el caracter no es válido.");
+        }
+        if caracteres_piezas.contains(&caracter) {
+            piezas.push(caracter);
+        }
+    }
+
+    if piezas.len() != 2 {
+        return Err("Debe haber 2 piezas en el archivo");
+    }
+
+    if (piezas[0].is_lowercase() == (piezas[1]).is_lowercase())
+        || piezas[0].is_uppercase() == piezas[1].is_uppercase()
+    {
+        return Err("Las piezas deben ser de distinto color");
+    }
+    Ok(())
 }
-fn imprimir_error(error: String) {
-    println!("Error: {error}");
-    std::process::exit(-1);
-}
+
 pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Vec<Pieza> {
     let mut piezas: Vec<Pieza> = Vec::new();
 
@@ -94,8 +106,40 @@ pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> String {
 mod tests {
     //use super::*;
 
+    use crate::validar_archivo;
+
     #[test]
-    fn test_input_valido() {
-        assert!(true);
+    fn test_longitud_archivo_distinto_a_128_lanza_error() {
+        let contenido_archivo = String::from("123456");
+        let result = validar_archivo(&contenido_archivo);
+        assert_eq!(
+            result,
+            Err("Formato del archivo incorrecto, la cantidad de caracteres debe ser 128.")
+        );
+    }
+
+    #[test]
+    fn test_archivo_con_caracter_invalido_lanza_error() {
+        let contenido_archivo = String::from("6").repeat(128);
+        let result = validar_archivo(&contenido_archivo);
+        assert_eq!(
+            result,
+            Err("Formato del archivo incorrecto, el caracter no es válido.")
+        );
+    }
+
+    #[test]
+    fn test_archivo_con_una_pieza() {
+        let contenido_archivo = String::from("_").repeat(127) + &String::from("R");
+        let result = validar_archivo(&contenido_archivo);
+        assert_eq!(result, Err("Debe haber 2 piezas en el archivo"));
+    }
+
+    #[test]
+    fn test_archivo_con_dos_piezas_mismo_color() {
+        let contenido_archivo =
+            String::from("_").repeat(126) + &String::from("R") + &String::from("P");
+        let result = validar_archivo(&contenido_archivo);
+        assert_eq!(result, Err("Las piezas deben ser de distinto color"));
     }
 }
