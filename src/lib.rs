@@ -20,10 +20,15 @@ pub trait TipoPieza {
         posicion.0 > LIMITE_TABLERO || posicion.1 > LIMITE_TABLERO
     }
 }
-pub fn leer_archivo() -> String {
+pub fn leer_archivo() -> Result<String, &'static str> {
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
-    fs::read_to_string(file_path).expect("Should have been able to read the file")
+    let content_result = fs::read_to_string(file_path);
+    let content = match content_result {
+        Ok(file) => file,
+        Err(_e) => return Err("Error al leer el archivo")
+    };
+    Ok(content)
 }
 pub fn validar_archivo(contenido_archivo: &String) -> Result<(), &'static str> {
     let caracteres_validos = [

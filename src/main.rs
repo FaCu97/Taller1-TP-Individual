@@ -9,7 +9,17 @@ fn imprimir_error(err: &'static str) {
 }
 
 fn main() {
-    let contenido_archivo = leer_archivo();
+    let contenido_archivo_result = leer_archivo();
+    
+    if let Err(e) = contenido_archivo_result {
+        imprimir_error(e);
+    }
+    let contenido_archivo = match contenido_archivo_result {
+        Ok(contenido_archivo) => contenido_archivo,
+        Err(e) => {imprimir_error(e);
+                        return;}
+    };
+    
     validar_archivo(&contenido_archivo).unwrap_or_else(|err| {
         imprimir_error(err);
     });
