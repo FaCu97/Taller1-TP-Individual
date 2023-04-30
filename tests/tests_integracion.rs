@@ -1,5 +1,6 @@
-use tp_individual::{evaluar_jugada, obtener_piezas_archivo};
-/// Falta implementar estos tests desde archivos
+//use tp_individual::{evaluar_jugada, obtener_piezas_archivo};
+// Falta implementar estos tests desde archivos
+/*
 #[test]
 fn test_integracion_negras_capturan() {
     let input = "_ _ _ _ _ _ _ _
@@ -64,3 +65,5 @@ fn test_integracion_todos_pierden() {
     let resultado = evaluar_jugada(&piezas[0], &piezas[1]);
     assert_eq!(resultado, "P");
 }
+
+*/

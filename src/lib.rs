@@ -8,31 +8,50 @@ mod peon_negro;
 mod pieza;
 mod rey;
 mod torre;
+pub const LIMITE_TABLERO: usize = 7;
 
-const LIMITE_TABLERO: usize = 7;
 pub enum ColorPieza {
     Blanco,
     Negro,
 }
 pub trait TipoPieza {
-    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Result<Vec<(usize, usize)>, &'static str>;
-    fn validar_posicion(&self, posicion: &(usize,usize)) -> Result<(),&'static str> {
+    /// Recibe una posición y devuelve un vector con todas las posiciones posibles de la pieza.
+    ///
+    /// Devuelve error si la posición recibida es inválida.
+    fn movimientos_posibles(
+        &self,
+        posicion: &(usize, usize),
+    ) -> Result<Vec<(usize, usize)>, &'static str>;
+    /// Devuelve error si la posición recibida es inválida.
+    fn validar_posicion(&self, posicion: &(usize, usize)) -> Result<(), &'static str> {
         if posicion.0 > LIMITE_TABLERO || posicion.1 > LIMITE_TABLERO {
             return Err("Posicion inválida");
         }
         Ok(())
     }
 }
+
+/// Lee el archivo cuya ruta se indica en los argumentos.
+///
+/// Devuelve error si no se puede leer el archivo.
 pub fn leer_archivo() -> Result<String, &'static str> {
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
     let content_result = fs::read_to_string(file_path);
     let content = match content_result {
         Ok(file) => file,
-        Err(_e) => return Err("Error al leer el archivo")
+        Err(_e) => return Err("Error al leer el archivo"),
     };
     Ok(content)
 }
+
+/// Realiza las validaciones sobre el string recibido.
+/// # Error
+/// Devuelve error en los siguientes casos:
+/// - La cantidad de caracteres es incorrecta.
+/// - Se encuentra un caracter inválido.
+/// - No hay dos caracteres de pieza.
+/// - Los caracteres no representan piezas de distinto color
 pub fn validar_archivo(contenido_archivo: &String) -> Result<(), &'static str> {
     let caracteres_validos = [
         ' ', '\n', '_', 'p', 'P', 'r', 'R', 'd', 'D', 't', 'T', 'a', 'A', 'c', 'C',
@@ -65,6 +84,9 @@ pub fn validar_archivo(contenido_archivo: &String) -> Result<(), &'static str> {
     Ok(())
 }
 
+/// Recibe el contenido del archivo y devuelve un array con las piezas contenidas.
+///
+/// Devuelve error si no se puede crear una pieza válida.
 pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Result<Vec<Pieza>, &'static str> {
     let mut piezas: Vec<Pieza> = Vec::new();
 
@@ -85,6 +107,17 @@ pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Result<Vec<Pieza>, &'s
     }
     Ok(piezas)
 }
+
+/// Recibe dos piezas y evalúa el ganador e imprime el resultado.
+///
+/// # Resultados pos0ibles:
+///  - "E" si hay empate
+///  - "B" si la pieza blanca captura
+///  - "N" si la pieza negra captura
+///  - "P" sin ninguna captura
+///
+/// # Error
+/// Devuelve error si no se pueden obtener los movimientos de una pieza.
 pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> Result<String, &'static str> {
     let pieza_blanca: &Pieza;
     let pieza_negra: &Pieza;
@@ -112,7 +145,6 @@ pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> Result<String, &'static
 
 #[cfg(test)]
 mod tests {
-    //use super::*;
 
     use crate::validar_archivo;
 

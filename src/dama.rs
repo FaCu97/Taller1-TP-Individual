@@ -5,7 +5,10 @@ const INICIO_TABLERO: usize = 0;
 const LIMITE_TABLERO: usize = 7;
 
 impl TipoPieza for Dama {
-    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Result<Vec<(usize, usize)>, &'static str> {
+    fn movimientos_posibles(
+        &self,
+        posicion: &(usize, usize),
+    ) -> Result<Vec<(usize, usize)>, &'static str> {
         self.validar_posicion(posicion)?;
         let mut movimientos_posibles_pieza: Vec<(usize, usize)> = Vec::new();
 
@@ -167,7 +170,7 @@ mod tests {
         let movimientos_result = pieza.movimientos_posibles(&posicion);
         let movimientos = match movimientos_result {
             Ok(movimientos) => movimientos,
-            Err(_e) => {return}
+            Err(_e) => return,
         };
         assert!(movimientos.contains(&(4, 3)));
     }
@@ -178,7 +181,7 @@ mod tests {
         let movimientos_result = pieza.movimientos_posibles(&posicion);
         let movimientos = match movimientos_result {
             Ok(movimientos) => movimientos,
-            Err(_e) => {return}
+            Err(_e) => return,
         };
         assert!(movimientos.contains(&(4, 2)));
     }
@@ -189,7 +192,7 @@ mod tests {
         let movimientos_result = pieza.movimientos_posibles(&posicion);
         let movimientos = match movimientos_result {
             Ok(movimientos) => movimientos,
-            Err(_e) => {return}
+            Err(_e) => return,
         };
         assert!(movimientos.contains(&(4, 5)));
     }
@@ -200,7 +203,7 @@ mod tests {
         let movimientos_result = pieza.movimientos_posibles(&posicion);
         let movimientos = match movimientos_result {
             Ok(movimientos) => movimientos,
-            Err(_e) => {return}
+            Err(_e) => return,
         };
         assert!(movimientos.contains(&(5, 4)));
     }
@@ -211,7 +214,7 @@ mod tests {
         let movimientos_result = pieza.movimientos_posibles(&posicion);
         let movimientos = match movimientos_result {
             Ok(movimientos) => movimientos,
-            Err(_e) => {return}
+            Err(_e) => return,
         };
         assert!(movimientos.contains(&(3, 4)));
     }
