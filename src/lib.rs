@@ -15,9 +15,12 @@ pub enum ColorPieza {
     Negro,
 }
 pub trait TipoPieza {
-    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Vec<(usize, usize)>;
-    fn posicion_es_invalida(&self, posicion: &(usize, usize)) -> bool {
-        posicion.0 > LIMITE_TABLERO || posicion.1 > LIMITE_TABLERO
+    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Result<Vec<(usize, usize)>, &'static str>;
+    fn validar_posicion(&self, posicion: &(usize,usize)) -> Result<(),&'static str> {
+        if posicion.0 > LIMITE_TABLERO || posicion.1 > LIMITE_TABLERO {
+            return Err("Posicion inválida");
+        }
+        Ok(())
     }
 }
 pub fn leer_archivo() -> Result<String, &'static str> {
@@ -62,7 +65,7 @@ pub fn validar_archivo(contenido_archivo: &String) -> Result<(), &'static str> {
     Ok(())
 }
 
-pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Vec<Pieza> {
+pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Result<Vec<Pieza>, &'static str> {
     let mut piezas: Vec<Pieza> = Vec::new();
 
     let mut j: usize;
@@ -74,15 +77,15 @@ pub fn obtener_piezas_archivo(contenido_archivo: &str) -> Vec<Pieza> {
             let pieza: Pieza;
             if caracter != '_' {
                 let posicion = (i, j);
-                pieza = Pieza::crear_pieza(&caracter, posicion);
+                pieza = Pieza::crear_pieza(&caracter, posicion)?;
                 piezas.push(pieza);
             }
             j += 1;
         }
     }
-    piezas
+    Ok(piezas)
 }
-pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> String {
+pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> Result<String, &'static str> {
     let pieza_blanca: &Pieza;
     let pieza_negra: &Pieza;
 
@@ -94,17 +97,17 @@ pub fn evaluar_jugada(pieza1: &Pieza, pieza2: &Pieza) -> String {
         pieza_negra = pieza1;
     }
 
-    let blanca_captura = pieza_blanca.puede_capturar_pieza(pieza_negra);
-    let negra_captura = pieza_negra.puede_capturar_pieza(pieza_blanca);
+    let blanca_captura = pieza_blanca.puede_capturar_pieza(pieza_negra)?;
+    let negra_captura = pieza_negra.puede_capturar_pieza(pieza_blanca)?;
 
     if blanca_captura && negra_captura {
-        return String::from("E");
+        return Ok(String::from("E"));
     } else if blanca_captura {
-        return String::from("B");
+        return Ok(String::from("B"));
     } else if negra_captura {
-        return String::from("N");
+        return Ok(String::from("N"));
     }
-    String::from("P")
+    Ok(String::from("P"))
 }
 
 #[cfg(test)]

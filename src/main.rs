@@ -11,9 +11,6 @@ fn imprimir_error(err: &'static str) {
 fn main() {
     let contenido_archivo_result = leer_archivo();
     
-    if let Err(e) = contenido_archivo_result {
-        imprimir_error(e);
-    }
     let contenido_archivo = match contenido_archivo_result {
         Ok(contenido_archivo) => contenido_archivo,
         Err(e) => {imprimir_error(e);
@@ -24,8 +21,20 @@ fn main() {
         imprimir_error(err);
     });
 
-    let piezas = obtener_piezas_archivo(&contenido_archivo);
+    let piezas_result = obtener_piezas_archivo(&contenido_archivo);
+    let piezas = match piezas_result {
+        Ok(piezas) => piezas,
+        Err(e) => {imprimir_error(e);
+                        return;}
+    };
 
-    let resultado = evaluar_jugada(&piezas[0], &piezas[1]);
+    let resultado_result = evaluar_jugada(&piezas[0], &piezas[1]);
+    let resultado = match resultado_result {
+        Ok(resultado) => resultado,
+        Err(e) => {imprimir_error(e);
+                        return;}
+    };
+
+
     println!("{resultado}");
 }

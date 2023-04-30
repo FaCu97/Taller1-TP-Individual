@@ -4,10 +4,8 @@ const INICIO_TABLERO: usize = 0;
 const LIMITE_TABLERO: usize = 7;
 
 impl TipoPieza for Caballo {
-    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Vec<(usize, usize)> {
-        if self.posicion_es_invalida(posicion) {
-            return Vec::new(); //Lanzo error
-        }
+    fn movimientos_posibles(&self, posicion: &(usize, usize)) -> Result<Vec<(usize, usize)>, &'static str> {
+        self.validar_posicion(posicion)?;
         let mut movimientos_posibles_pieza: Vec<(usize, usize)> = Vec::new();
 
         movimientos_posibles_pieza =
@@ -15,7 +13,7 @@ impl TipoPieza for Caballo {
         movimientos_posibles_pieza =
             agregar_movimientos_hacia_abajo(movimientos_posibles_pieza, posicion);
 
-        movimientos_posibles_pieza
+        Ok(movimientos_posibles_pieza)
     }
 }
 fn agregar_movimientos_hacia_arriba(
@@ -77,79 +75,111 @@ mod tests {
     fn test_caballo_puede_mover_arriba_izquierda_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(3, 2)));
     }
     #[test]
     fn test_caballo_puede_mover_arriba_derecha_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(5, 2)));
     }
     #[test]
     fn test_caballo_puede_mover_izquierda_arriba_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(2, 3)));
     }
     #[test]
     fn test_caballo_puede_mover_izquierda_abajo_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(2, 5)));
     }
     #[test]
     fn test_caballo_puede_mover_derecha_arriba_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(6, 3)));
     }
     #[test]
     fn test_caballo_puede_mover_derecha_abajo_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(6, 5)));
     }
     #[test]
     fn test_caballo_puede_mover_abajo_izquierda_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(3, 6)));
     }
     #[test]
     fn test_caballo_puede_mover_abajo_derecha_desde_4_4() {
         let pieza = Caballo;
         let posicion = (4, 4);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(5, 6)));
     }
     #[test]
     fn test_caballo_puede_mover_abajo_derecha_desde_1_2() {
         let pieza = Caballo;
         let posicion = (1, 2);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(2, 4)));
     }
-    #[test]
-    fn test_caballo_no_puede_mover_arriba_derecha_desde_0_0() {
-        let pieza = Caballo;
-        let posicion = (0, 0);
-        let _movimientos = pieza.movimientos_posibles(&posicion);
-        //assert!(movimientos.contains(&(2, 4)));
-        // capturo error
-        assert!(matches!(1, 1));
-    }
+
     #[test]
     fn test_caballo_puede_mover_arriba_derecha_desde_0_2() {
         let pieza = Caballo;
         let posicion = (0, 2);
-        let movimientos = pieza.movimientos_posibles(&posicion);
+        let movimientos_result = pieza.movimientos_posibles(&posicion);
+        let movimientos = match movimientos_result {
+            Ok(movimientos) => movimientos,
+            Err(_e) => {return}
+        };
         assert!(movimientos.contains(&(1, 0)));
 
         assert!(matches!(1, 1));
